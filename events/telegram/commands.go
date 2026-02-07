@@ -1,6 +1,9 @@
 package telegram
 
-import "strings"
+import (
+	"log"
+	"strings"
+)
 
 const (
 	HelpCmd  = "/help"
@@ -10,7 +13,7 @@ const (
 func (p *Processor) doCmd(text string, chatID int, username string) error {
 	text = strings.TrimSpace(text)
 
-	// logs can do in this
+	log.Printf("dfsf", "fds")
 
 	switch text {
 	case HelpCmd:
