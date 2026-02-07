@@ -1,6 +1,7 @@
 package event_consumer
 
 import (
+	"log/slog"
 	"time"
 
 	"github.com/kekehahaa/gogram/events"
@@ -10,13 +11,15 @@ type Consumer struct {
 	fetcher   events.Fetcher
 	processor events.Processor
 	batchSize int
+	log       slog.Logger
 }
 
-func New(fetcher events.Fetcher, processor events.Processor, batchSize int) Consumer {
+func New(log slog.Logger, fetcher events.Fetcher, processor events.Processor, batchSize int) Consumer {
 	return Consumer{
 		fetcher:   fetcher,
 		processor: processor,
 		batchSize: batchSize,
+		log:       log,
 	}
 }
 
@@ -24,7 +27,7 @@ func (c Consumer) Start() error {
 	for {
 		gotEvents, err := c.fetcher.Fetch(c.batchSize)
 		if err != nil {
-			// log
+			//
 
 			continue
 		}

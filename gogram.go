@@ -2,6 +2,7 @@ package gogram
 
 import (
 	"fmt"
+	"log/slog"
 
 	tgclient "github.com/kekehahaa/gogram/clients/telegram"
 	event_consumer "github.com/kekehahaa/gogram/consumer/event-consumer"
@@ -15,9 +16,10 @@ const (
 type Bot struct {
 	token     string
 	batchSize int
+	log       slog.Logger
 }
 
-func New(token string, batchSize int) (*Bot, error) {
+func New(token string, batchSize int, logger slog.Logger) (*Bot, error) {
 	if token == "" {
 		return nil, fmt.Errorf("token is nil")
 	}
@@ -25,6 +27,7 @@ func New(token string, batchSize int) (*Bot, error) {
 	return &Bot{
 		token:     token,
 		batchSize: batchSize,
+		log:       logger,
 	}, nil
 }
 
@@ -32,9 +35,9 @@ func (b *Bot) StartTelegramBot() error {
 
 	eventsProcessor := telegram.New(tgclient.New(tgBotHost, b.token))
 
-	// log
+	b.log.Info("Starting bot")
 
-	consumer := event_consumer.New(eventsProcessor, eventsProcessor, b.batchSize)
+	consumer := event_consumer.New(b.log, eventsProcessor, eventsProcessor, b.batchSize)
 	if err := consumer.Start(); err != nil {
 		return fmt.Errorf("token is nil")
 	}
