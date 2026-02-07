@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/kekehahaa/gogram/events"
+	"github.com/kekehahaa/gogram/internal/lib/logger/sl"
 )
 
 type Consumer struct {
@@ -27,7 +28,7 @@ func (c Consumer) Start() error {
 	for {
 		gotEvents, err := c.fetcher.Fetch(c.batchSize)
 		if err != nil {
-			//
+			c.log.Error("can't fetch events", sl.Err(err))
 
 			continue
 		}
@@ -39,7 +40,7 @@ func (c Consumer) Start() error {
 		}
 
 		if err := c.handleEvents(gotEvents); err != nil {
-			// log
+			c.log.Error("can't handle events", sl.Err(err))
 
 			continue
 		}
@@ -51,10 +52,10 @@ func (c Consumer) Start() error {
 // 3. параллельная обработка: понадобится WaitGroup
 func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
-		// log
+		c.log.Info("got new event", slog.String("text", event.Text))
 
 		if err := c.processor.Process(event); err != nil {
-			// log
+			c.log.Error("can't handle event", sl.Err(err))
 
 			continue
 		}
