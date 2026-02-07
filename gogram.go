@@ -17,17 +17,18 @@ type Bot struct {
 	batchSize int
 }
 
-func New(token string, batchSize int) *Bot {
+func New(token string, batchSize int) (*Bot, error) {
+	if token == "" {
+		return nil, fmt.Errorf("token is nil")
+	}
+
 	return &Bot{
 		token:     token,
 		batchSize: batchSize,
-	}
+	}, nil
 }
 
-func (b *Bot) StartTelegramBot(token string) error {
-	if token == "" {
-		return fmt.Errorf("token is nil")
-	}
+func (b *Bot) StartTelegramBot() error {
 
 	eventsProcessor := telegram.New(tgclient.New(tgBotHost, b.token))
 
