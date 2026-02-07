@@ -32,6 +32,7 @@ func New(token string, batchSize int, logger slog.Logger) (*Bot, error) {
 }
 
 func (b *Bot) StartTelegramBot() error {
+	slog.SetDefault(b.log.logger)
 
 	eventsProcessor := telegram.New(tgclient.New(tgBotHost, b.token))
 
